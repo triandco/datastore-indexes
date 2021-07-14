@@ -8,7 +8,7 @@
   type Animal = { name: string; id: string };
   let animalName: string = "Rover";
   let datastore;
-  let animals: Animal[] = [];
+  let fetchResult:any;
   let userId: string;
   const pageSize: number = 2;
   let schemaContent: any;
@@ -40,10 +40,7 @@
       {},
       { limit: pageSize, bookmark: bookmark, raw: true }
     );
-    console.log(result);
-    animals = result.docs;
-    bookmark = result.bookmark;
-    if(result.warning){alert(result.warning);}
+    fetchResult = result;
   }
 
   async function addItemButtonClicked() {
@@ -67,24 +64,23 @@
 
 <main>
   {#if datastore !== undefined}
-    <p>Helloo {userId}</p>
-    <h1>Add an entry to datastore</h1>
+    <h1>{applicationName}</h1>
+    <p>Helloo {userId}!</p>
+    <h2>Add an entry to datastore</h2>
     <input type="text" bind:value={animalName} />
     <button on:click={addItemButtonClicked}>Create</button>
     <hr />
     <h2>Fetch from datastore</h2>
     <button on:click={loadAnimal}>Fetch</button>
-    <ul>
-      {#each animals as animal}
-        <li>{animal.name} - {animal.id}</li>
-      {/each}
-    </ul>
+    {#if fetchResult!==undefined}
+    <textarea style="width:100%; min-height:180px;">{JSON.stringify(fetchResult, null, 4)}</textarea>
+    {/if}
     <hr />
     <h2>Schema</h2>
     <div>
       <label for="schemaURL">Source</label>
       <input type="text" style="width: 100%" id="schemaURL" disabled bind:value={schema} />
-      <label for="databaseConfig">Database props</label>
+      <label for="databaseConfig">JSON content</label>
       <textarea style="width:100%; min-height:320px;">{JSON.stringify(schemaContent, null, 4)}</textarea>
       
     </div>
